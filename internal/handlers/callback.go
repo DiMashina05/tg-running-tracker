@@ -10,14 +10,16 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+type Callback string
+
 const (
-	cbMe          = "me"
-	cbStats       = "stats"
-	cbAddTraining = "add_training"
-	cbBack        = "back"
+	cbMe          Callback = "me"
+	cbStats       Callback = "stats"
+	cbAddTraining Callback = "add_training"
+	cbBack        Callback = "back"
 )
 
-func HandleCallback(bot *tgbotapi.BotAPI, update tgbotapi.Update, state *storage.State) {
+func HandleCallback(bot *tgbotapi.BotAPI, update tgbotapi.Update, store storage.Store) {
 	cq := update.CallbackQuery
 
 	cb := tgbotapi.NewCallback(cq.ID, "")
@@ -31,30 +33,30 @@ func HandleCallback(bot *tgbotapi.BotAPI, update tgbotapi.Update, state *storage
 	chatId := cq.Message.Chat.ID
 	messageID := cq.Message.MessageID
 
-	if !state.IsRegistered(fromId) {
+	if !store.IsRegistered(fromId) {
 		tg.SendText(bot, chatId, "Сначала зарегистрируйся: введи команду /start")
 		return
 	}
 
-	switch data {
+	switch Callback(data) {
 	case cbMe:
 
-		text := service.OpenMe(state, fromId)
+		text := service.OpenMe(store, fromId)
 		tg.EditBack(bot, chatId, messageID, text)
 
 	case cbStats:
 
-		text := service.OpenStats(state, fromId)
+		text := service.OpenStats(store, fromId)
 		tg.EditBack(bot, chatId, messageID, text)
 
 	case cbAddTraining:
 
-		text := service.OpenAddTraining(state, fromId)
+		text := service.OpenAddTraining(store, fromId)
 		tg.EditBack(bot, chatId, messageID, text)
 
 	case cbBack:
 
-		service.OpenBack(state, fromId)
+		service.OpenBack(store, fromId)
 		tg.EditMenu(bot, chatId, messageID)
 
 	}

@@ -6,16 +6,16 @@ import (
 	storage "github.com/DiMashina05/tg-running-tracker/internal/storage"
 )
 
-func OpenMe(state *storage.State, fromId int64) string {
-	state.ClearWaitingDistance(fromId)
+func OpenMe(store storage.Store, fromId int64) string {
+	store.ClearWaitingDistance(fromId)
 
-	return fmt.Sprintf("Тебя зовут: %s\n", state.GetName(fromId)) + "Невероятно полезная информация, да?"
+	return fmt.Sprintf("Тебя зовут: %s\n", store.GetName(fromId)) + "Невероятно полезная информация, да?"
 }
 
-func OpenStats(state *storage.State, fromId int64) string {
-	state.ClearWaitingDistance(fromId)
+func OpenStats(store storage.Store, fromId int64) string {
+	store.ClearWaitingDistance(fromId)
 
-	stats, err := GetStats(state, fromId)
+	stats, err := GetStats(store, fromId)
 
 	if err != nil {
 		return err.Error()
@@ -26,12 +26,12 @@ func OpenStats(state *storage.State, fromId int64) string {
 		stats.CountRuns, stats.SumDistans, stats.Average, stats.MaxDist, stats.MinDist)
 }
 
-func OpenAddTraining(state *storage.State, fromId int64) string {
-	state.SetWaitingDistance(fromId)
+func OpenAddTraining(store storage.Store, fromId int64) string {
+	store.SetWaitingDistance(fromId)
 
 	return "Сколько км пробежал?\nВведи число в километрах"
 }
 
-func OpenBack(state *storage.State, fromId int64) {
-	state.ClearWaitingDistance(fromId)
+func OpenBack(store storage.Store, fromId int64) {
+	store.ClearWaitingDistance(fromId)
 }

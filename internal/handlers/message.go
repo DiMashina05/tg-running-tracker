@@ -10,23 +10,23 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, state *storage.State) {
+func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, store storage.Store) {
 	fromId := update.Message.From.ID
 	chatId := update.Message.Chat.ID
 
 	if update.Message.IsCommand() {
-		if state.IsWaitingName(fromId) {
+		if store.IsWaitingName(fromId) {
 			tg.SendText(bot, chatId, "Сначала введи имя")
 			return
 		}
 
-		if state.IsWaitingDistance(fromId) {
+		if store.IsWaitingDistance(fromId) {
 			tg.SendText(bot, chatId, "Сначала введи дистанцию или нажми Назад")
 			return
 		}
 
 		if update.Message.Command() == "start" {
-			if service.CommandStart(state, fromId) {
+			if service.CommandStart(store, fromId) {
 				tg.SendText(bot, chatId, "Ты уже зарегистрирован")
 
 				tg.SendMenu(bot, chatId)
@@ -41,9 +41,9 @@ func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, state *storage.
 
 	text := update.Message.Text
 
-	if state.IsWaitingName(fromId) {
+	if store.IsWaitingName(fromId) {
 
-		name, err := service.NameInput(state, text, fromId)
+		name, err := service.NameInput(store, text, fromId)
 
 		if err != nil {
 			tg.SendText(bot, chatId, err.Error())
@@ -57,8 +57,8 @@ func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, state *storage.
 		return
 	}
 
-	if state.IsWaitingDistance(fromId) {
-		dist, err := service.DistInput(state, text, fromId)
+	if store.IsWaitingDistance(fromId) {
+		dist, err := service.DistInput(store, text, fromId)
 		if err != nil {
 			tg.SendText(bot, chatId, err.Error())
 			return
@@ -68,7 +68,7 @@ func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, state *storage.
 		return
 	}
 
-	if !state.IsRegistered(fromId) {
+	if !store.IsRegistered(fromId) {
 		tg.SendText(bot, chatId, "Сначала зарегистрируйся: введи команду /start")
 		return
 	}

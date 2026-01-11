@@ -25,17 +25,17 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 
-	state := storage.NewState()
+	var store storage.Store = storage.NewState()
 
 	for update := range updates {
 
 		if update.CallbackQuery != nil {
-			handlers.HandleCallback(bot, update, state)
+			handlers.HandleCallback(bot, update, store)
 			continue
 		}
 
 		if update.Message != nil {
-			handlers.HandleMessage(bot, update, state)
+			handlers.HandleMessage(bot, update, store)
 		}
 	}
 }

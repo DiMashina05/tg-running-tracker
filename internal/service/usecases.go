@@ -6,22 +6,22 @@ import (
 	storage "github.com/DiMashina05/tg-running-tracker/internal/storage"
 )
 
-func NameInput(state *storage.State, text string, fromId int64) (string, error) {
+func NameInput(store storage.Store, text string, fromId int64) (string, error) {
 	name, err := ValidateName(text)
 
 	if err != nil {
 		return "", err
 	}
 
-	state.SetUser(fromId)
-	state.AddName(fromId, name)
+	store.SetUser(fromId)
+	store.AddName(fromId, name)
 
-	state.ClearWaitingName(fromId)
+	store.ClearWaitingName(fromId)
 
 	return name, nil
 }
 
-func DistInput(state *storage.State, text string, fromId int64) (float64, error) {
+func DistInput(store storage.Store, text string, fromId int64) (float64, error) {
 
 	dist, err := ValidateDist(text)
 
@@ -29,26 +29,26 @@ func DistInput(state *storage.State, text string, fromId int64) (float64, error)
 		return 0, err
 	}
 
-	state.AddRun(fromId, dist)
+	store.AddRun(fromId, dist)
 
-	state.ClearWaitingDistance(fromId)
+	store.ClearWaitingDistance(fromId)
 
 	return dist, nil
 }
 
-func CommandStart(state *storage.State, fromId int64) bool {
-	if state.IsRegistered(fromId) {
+func CommandStart(store storage.Store, fromId int64) bool {
+	if store.IsRegistered(fromId) {
 		return true
 	}
 
-	state.SetWaitingName(fromId)
+	store.SetWaitingName(fromId)
 
 	return false
 }
 
-func GetStats(state *storage.State, fromId int64) (*storage.Stats, error) {
+func GetStats(store storage.Store, fromId int64) (*storage.Stats, error) {
 
-	userRuns := state.GetRuns(fromId)
+	userRuns := store.GetRuns(fromId)
 
 	if len(userRuns) == 0 {
 		return nil, errors.New("У тебя ещё не было тренировок")
