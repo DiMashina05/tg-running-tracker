@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: running_tracker_db
+    environment:
+      POSTGRES_DB: running_tracker
+      POSTGRES_USER: rt_user
+      POSTGRES_PASSWORD: rt_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

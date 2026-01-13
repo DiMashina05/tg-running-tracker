@@ -1,11 +1,11 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   user_id BIGINT PRIMARY KEY,
   name TEXT NOT NULL DEFAULT '',
   waiting_name BOOLEAN NOT NULL DEFAULT false,
   waiting_distance BOOLEAN NOT NULL DEFAULT false
   );
 
- CREATE TABLE runs (
+ CREATE TABLE IF NOT EXISTS runs (
   id BIGSERIAL PRIMARY KEY,
   user_id BIGINT NOT NULL,
   distance FLOAT8 NOT NULL

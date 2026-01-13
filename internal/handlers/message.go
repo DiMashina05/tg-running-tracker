@@ -31,8 +31,8 @@ func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, store storage.S
 
 				tg.SendMenu(bot, chatID)
 			} else {
-				tg.SendText(bot, chatID, "Данная версия бота пока не рабочая."+
-					" Ждём, когда я добавлю бд, допишу больше статистик+разновидностей тренировок и Добавлю заявки в друзья")
+				tg.SendText(bot, chatID, "Бот ещё не дописан, ведутся работы."+
+					" Ждём, когда я допишу больше статистик+разновидностей тренировок и Добавлю заявки в друзья")
 				tg.SendText(bot, chatID, "Введите имя")
 			}
 		}
