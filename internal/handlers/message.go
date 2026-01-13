@@ -11,29 +11,29 @@ import (
 )
 
 func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, store storage.Store) {
-	fromId := update.Message.From.ID
-	chatId := update.Message.Chat.ID
+	fromID := update.Message.From.ID
+	chatID := update.Message.Chat.ID
 
 	if update.Message.IsCommand() {
-		if store.IsWaitingName(fromId) {
-			tg.SendText(bot, chatId, "Сначала введи имя")
+		if store.IsWaitingName(fromID) {
+			tg.SendText(bot, chatID, "Сначала введи имя")
 			return
 		}
 
-		if store.IsWaitingDistance(fromId) {
-			tg.SendText(bot, chatId, "Сначала введи дистанцию или нажми Назад")
+		if store.IsWaitingDistance(fromID) {
+			tg.SendText(bot, chatID, "Сначала введи дистанцию или нажми Назад")
 			return
 		}
 
 		if update.Message.Command() == "start" {
-			if service.CommandStart(store, fromId) {
-				tg.SendText(bot, chatId, "Ты уже зарегистрирован")
+			if service.CommandStart(store, fromID) {
+				tg.SendText(bot, chatID, "Ты уже зарегистрирован")
 
-				tg.SendMenu(bot, chatId)
+				tg.SendMenu(bot, chatID)
 			} else {
-				tg.SendText(bot, chatId, "Данная версия бота пока не рабочая."+
+				tg.SendText(bot, chatID, "Данная версия бота пока не рабочая."+
 					" Ждём, когда я добавлю бд, допишу больше статистик+разновидностей тренировок и Добавлю заявки в друзья")
-				tg.SendText(bot, chatId, "Введите имя")
+				tg.SendText(bot, chatID, "Введите имя")
 			}
 		}
 		return
@@ -41,37 +41,37 @@ func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update, store storage.S
 
 	text := update.Message.Text
 
-	if store.IsWaitingName(fromId) {
+	if store.IsWaitingName(fromID) {
 
-		name, err := service.NameInput(store, text, fromId)
+		name, err := service.NameInput(store, text, fromID)
 
 		if err != nil {
-			tg.SendText(bot, chatId, err.Error())
+			tg.SendText(bot, chatID, err.Error())
 			return
 		}
 
-		tg.SendText(bot, chatId, fmt.Sprintf("%s, Поздравляю, ты зарегистрировался!", name))
+		tg.SendText(bot, chatID, fmt.Sprintf("%s, Поздравляю, ты зарегистрировался!", name))
 
-		tg.SendMenu(bot, chatId)
+		tg.SendMenu(bot, chatID)
 
 		return
 	}
 
-	if store.IsWaitingDistance(fromId) {
-		dist, err := service.DistInput(store, text, fromId)
+	if store.IsWaitingDistance(fromID) {
+		dist, err := service.DistInput(store, text, fromID)
 		if err != nil {
-			tg.SendText(bot, chatId, err.Error())
+			tg.SendText(bot, chatID, err.Error())
 			return
 		}
-		tg.SendText(bot, chatId, fmt.Sprintf("Молодец! Ты пробежал %.2f километров\nТренировка добавлена", dist))
-		tg.SendMenu(bot, chatId)
+		tg.SendText(bot, chatID, fmt.Sprintf("Молодец! Ты пробежал %.2f километров\nТренировка добавлена", dist))
+		tg.SendMenu(bot, chatID)
 		return
 	}
 
-	if !store.IsRegistered(fromId) {
-		tg.SendText(bot, chatId, "Сначала зарегистрируйся: введи команду /start")
+	if !store.IsRegistered(fromID) {
+		tg.SendText(bot, chatID, "Сначала зарегистрируйся: введи команду /start")
 		return
 	}
 
-	tg.SendText(bot, chatId, "Функция пока не добавлена, лучше погладь котика")
+	tg.SendText(bot, chatID, "Функция пока не добавлена, лучше погладь котика")
 }

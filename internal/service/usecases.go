@@ -6,22 +6,21 @@ import (
 	storage "github.com/DiMashina05/tg-running-tracker/internal/storage"
 )
 
-func NameInput(store storage.Store, text string, fromId int64) (string, error) {
+func NameInput(store storage.Store, text string, fromID int64) (string, error) {
 	name, err := ValidateName(text)
 
 	if err != nil {
 		return "", err
 	}
 
-	store.SetUser(fromId)
-	store.AddName(fromId, name)
+	store.AddName(fromID, name)
 
-	store.ClearWaitingName(fromId)
+	store.ClearWaitingName(fromID)
 
 	return name, nil
 }
 
-func DistInput(store storage.Store, text string, fromId int64) (float64, error) {
+func DistInput(store storage.Store, text string, fromID int64) (float64, error) {
 
 	dist, err := ValidateDist(text)
 
@@ -29,26 +28,26 @@ func DistInput(store storage.Store, text string, fromId int64) (float64, error) 
 		return 0, err
 	}
 
-	store.AddRun(fromId, dist)
+	store.AddRun(fromID, dist)
 
-	store.ClearWaitingDistance(fromId)
+	store.ClearWaitingDistance(fromID)
 
 	return dist, nil
 }
 
-func CommandStart(store storage.Store, fromId int64) bool {
-	if store.IsRegistered(fromId) {
+func CommandStart(store storage.Store, fromID int64) bool {
+	if store.IsRegistered(fromID) {
 		return true
 	}
 
-	store.SetWaitingName(fromId)
+	store.SetWaitingName(fromID)
 
 	return false
 }
 
-func GetStats(store storage.Store, fromId int64) (*storage.Stats, error) {
+func GetStats(store storage.Store, fromID int64) (*storage.Stats, error) {
 
-	userRuns := store.GetRuns(fromId)
+	userRuns := store.GetRuns(fromID)
 
 	if len(userRuns) == 0 {
 		return nil, errors.New("У тебя ещё не было тренировок")

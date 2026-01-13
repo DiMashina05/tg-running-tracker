@@ -3,7 +3,6 @@ package storage
 type Store interface {
 	// регистрация
 	IsRegistered(fromID int64) bool
-	SetUser(fromID int64)
 
 	// Профиль
 	GetName(fromID int64) string

@@ -29,35 +29,35 @@ func HandleCallback(bot *tgbotapi.BotAPI, update tgbotapi.Update, store storage.
 	}
 
 	data := cq.Data
-	fromId := cq.From.ID
-	chatId := cq.Message.Chat.ID
+	fromID := cq.From.ID
+	chatID := cq.Message.Chat.ID
 	messageID := cq.Message.MessageID
 
-	if !store.IsRegistered(fromId) {
-		tg.SendText(bot, chatId, "Сначала зарегистрируйся: введи команду /start")
+	if !store.IsRegistered(fromID) {
+		tg.SendText(bot, chatID, "Сначала зарегистрируйся: введи команду /start")
 		return
 	}
 
 	switch Callback(data) {
 	case cbMe:
 
-		text := service.OpenMe(store, fromId)
-		tg.EditBack(bot, chatId, messageID, text)
+		text := service.OpenMe(store, fromID)
+		tg.EditBack(bot, chatID, messageID, text)
 
 	case cbStats:
 
-		text := service.OpenStats(store, fromId)
-		tg.EditBack(bot, chatId, messageID, text)
+		text := service.OpenStats(store, fromID)
+		tg.EditBack(bot, chatID, messageID, text)
 
 	case cbAddTraining:
 
-		text := service.OpenAddTraining(store, fromId)
-		tg.EditBack(bot, chatId, messageID, text)
+		text := service.OpenAddTraining(store, fromID)
+		tg.EditBack(bot, chatID, messageID, text)
 
 	case cbBack:
 
-		service.OpenBack(store, fromId)
-		tg.EditMenu(bot, chatId, messageID)
+		service.OpenBack(store, fromID)
+		tg.EditMenu(bot, chatID, messageID)
 
 	}
 }
