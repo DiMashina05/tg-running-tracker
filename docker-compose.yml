@@ -11,5 +11,18 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  db_test:
+    image: postgres:16
+    container_name: running_tracker_db_test
+    environment:
+      POSTGRES_DB: running_tracker_test
+      POSTGRES_USER: rt_user
+      POSTGRES_PASSWORD: rt_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+
 volumes:
   pgdata:
+  pgdata_test:
