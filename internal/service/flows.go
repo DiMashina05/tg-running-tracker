@@ -9,16 +9,28 @@ import (
 func OpenMe(store storage.Store, fromID int64) string {
 	store.ClearWaitingDistance(fromID)
 
-	return fmt.Sprintf("Тебя зовут: %s\n", store.GetName(fromID)) + "Невероятно полезная информация, да?"
+	if !store.IsRegistered(fromID) {
+		return "Сначала зарегистрируйся: введи команду /start"
+	}
+
+	return fmt.Sprintf("Тебя зовут: %s, твой ID: %d\n", store.GetName(fromID), fromID) +
+		"В будущем id будет использоваться для подачи заявок в друзья"
 }
 
 func OpenStats(store storage.Store, fromID int64) string {
 	store.ClearWaitingDistance(fromID)
 
-	stats, err := GetStats(store, fromID)
+	if !store.IsRegistered(fromID) {
+		return "Сначала зарегистрируйся: введи команду /start"
+	}
 
+	stats, err := GetStats(store, fromID)
 	if err != nil {
-		return err.Error()
+		return "Произошла ошибка. Попробуй позже."
+	}
+
+	if stats.CountRuns == 0 {
+		return "У тебя ещё не было тренировок"
 	}
 
 	return fmt.Sprintf("🏃 Пробежек: %d\n"+"📏 Суммарная дистанция: %.2f\n"+
@@ -27,8 +39,11 @@ func OpenStats(store storage.Store, fromID int64) string {
 }
 
 func OpenAddTraining(store storage.Store, fromID int64) string {
-	store.SetWaitingDistance(fromID)
+	if !store.IsRegistered(fromID) {
+		return "Сначала зарегистрируйся: введи команду /start"
+	}
 
+	store.SetWaitingDistance(fromID)
 	return "Сколько км пробежал?\nВведи число в километрах"
 }
 

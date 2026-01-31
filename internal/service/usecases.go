@@ -1,56 +1,79 @@
 package service
 
 import (
-	"errors"
+	"fmt"
 
 	storage "github.com/DiMashina05/tg-running-tracker/internal/storage"
 )
 
 func NameInput(store storage.Store, text string, fromID int64) (string, error) {
-	name, err := ValidateName(text)
+	
+	name, err := SetName(store, text, fromID)
+	if err == nil{
+		store.ClearWaitingName(fromID)
+	}
 
+	return name, err
+}
+
+func SetName(store storage.Store, text string, fromID int64) (string, error) {
+	if store.IsRegistered(fromID) {
+		return "", ErrAlreadyRegistered
+	}
+
+	name, err := ValidateName(text)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%w: %v", ErrInvalidName, err)
 	}
 
 	store.AddName(fromID, name)
-
-	store.ClearWaitingName(fromID)
-
 	return name, nil
 }
 
 func DistInput(store storage.Store, text string, fromID int64) (float64, error) {
 
-	dist, err := ValidateDist(text)
+	dist, err := AddRun(store, text, fromID)
+	if err == nil{
+		store.ClearWaitingDistance(fromID)
+	}
 
+	return dist, err
+}
+
+func AddRun(store storage.Store, text string, fromID int64) (float64, error) {
+	if !store.IsRegistered(fromID) {
+		return 0, ErrNotRegistered
+	}
+
+	dist, err := ValidateDist(text)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("%w: %v", ErrInvalidDistance, err)
 	}
 
 	store.AddRun(fromID, dist)
-
-	store.ClearWaitingDistance(fromID)
-
 	return dist, nil
 }
 
-func CommandStart(store storage.Store, fromID int64) bool {
+func CommandStart(store storage.Store, fromID int64) error {
 	if store.IsRegistered(fromID) {
-		return true
+		return ErrAlreadyRegistered
 	}
 
 	store.SetWaitingName(fromID)
-
-	return false
+	return nil
 }
 
 func GetStats(store storage.Store, fromID int64) (*storage.Stats, error) {
-
 	userRuns := store.GetRuns(fromID)
 
 	if len(userRuns) == 0 {
-		return nil, errors.New("У тебя ещё не было тренировок")
+		return &storage.Stats{
+			CountRuns:  0,
+			SumDistans: 0,
+			Average:    0,
+			MaxDist:    0,
+			MinDist:    0,
+		}, nil
 	}
 
 	countRuns := len(userRuns)
@@ -62,13 +85,16 @@ func GetStats(store storage.Store, fromID int64) (*storage.Stats, error) {
 	for _, v := range userRuns[1:] {
 		maxDist = max(maxDist, v)
 		minDist = min(minDist, v)
-
 		sumDistans += v
 	}
 
 	average := sumDistans / float64(countRuns)
 
-	stats := &storage.Stats{CountRuns: countRuns, SumDistans: sumDistans, Average: average, MaxDist: maxDist, MinDist: minDist}
-
-	return stats, nil
+	return &storage.Stats{
+		CountRuns:  countRuns,
+		SumDistans: sumDistans,
+		Average:    average,
+		MaxDist:    maxDist,
+		MinDist:    minDist,
+	}, nil
 }

@@ -1,3 +1,5 @@
+//Вайб код тесты
+
 package postgres
 
 import (

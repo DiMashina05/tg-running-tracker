@@ -1,3 +1,5 @@
+//Вайб код тесты
+
 package service
 
 import "testing"
