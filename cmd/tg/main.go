@@ -31,8 +31,8 @@ func main() {
 
 	if err := pool.Ping(context.Background()); err != nil {
 		log.Panic(err)
-
 	}
+	
 	//подключаюсь к боту
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 
