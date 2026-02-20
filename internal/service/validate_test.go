@@ -1,5 +1,3 @@
-//Вайб код тесты
-
 package service
 
 import "testing"
@@ -15,7 +13,6 @@ func TestValidateName(t *testing.T) {
 		{"empty", "", "", true},
 		{"spaces_only", "   ", "", true},
 		{"too_short_2", "аб", "", true},
-		// 3 символа — ок
 		{"min_len_ok", "abc", "abc", false},
 	}
 

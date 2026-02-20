@@ -7,9 +7,9 @@ import (
 )
 
 func NameInput(store storage.Store, text string, fromID int64) (string, error) {
-	
+
 	name, err := SetName(store, text, fromID)
-	if err == nil{
+	if err == nil {
 		store.ClearWaitingName(fromID)
 	}
 
@@ -33,7 +33,7 @@ func SetName(store storage.Store, text string, fromID int64) (string, error) {
 func DistInput(store storage.Store, text string, fromID int64) (float64, error) {
 
 	dist, err := AddRun(store, text, fromID)
-	if err == nil{
+	if err == nil {
 		store.ClearWaitingDistance(fromID)
 	}
 
@@ -64,6 +64,10 @@ func CommandStart(store storage.Store, fromID int64) error {
 }
 
 func GetStats(store storage.Store, fromID int64) (*storage.Stats, error) {
+
+	if !store.IsRegistered(fromID) {
+		return nil, ErrNotRegistered
+	}
 	userRuns := store.GetRuns(fromID)
 
 	if len(userRuns) == 0 {
