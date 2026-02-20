@@ -1,6 +1,6 @@
 SHELL := bash
 
-.PHONY: up down ps logs init run db init-test db-test logs-test test test-cover test-db
+.PHONY: up down ps logs init run db run-api init-test db-test logs-test test test-cover test-db
 
 # Поднять Postgres (Docker): dev + test
 up:
@@ -28,6 +28,9 @@ run:
 
 # Быстрый старт dev: поднять БД и применить схему
 db: up init
+
+run-api:
+	. .env && go run ./cmd/api
 
 # Инициализировать test БД (порт 5434, база running_tracker_test)
 init-test:
