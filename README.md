@@ -67,17 +67,17 @@ make test-cover
 
 ## Структура проекта
 cmd/tg/              — точка входа Telegram-бота
-cmd/api/             — точка входа REST API
+- cmd/api/             — точка входа REST API
 
-internal/handlers/   — обработчики сообщений и callback-кнопок (Telegram)
-internal/httpapi/    — REST API (handlers, DTO, server)
-internal/service/    — бизнес-логика
-internal/storage/    — интерфейсы хранилища данных
-internal/storage/postgres/ — реализация хранилища на PostgreSQL
-internal/telegram/   — обёртки над Telegram Bot API
+- internal/handlers/   — обработчики сообщений и callback-кнопок (Telegram)
+- internal/httpapi/    — REST API (handlers, DTO, server)
+- internal/service/    — бизнес-логика
+- internal/storage/    — интерфейсы хранилища данных
+- internal/storage/postgres/ — реализация хранилища на PostgreSQL
+- internal/telegram/   — обёртки над Telegram Bot API
 
-sql/                 — SQL-скрипты (создание таблиц)
-.github/workflows/   — CI (GitHub Actions)
+- sql/                 — SQL-скрипты (создание таблиц)
+- .github/workflows/   — CI (GitHub Actions)
 
 
 ## Статус проекта
