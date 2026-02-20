@@ -4,6 +4,7 @@
 - Бот в телеграме: @DM_Running_bot
 
 ## Возможности
+- REST API для работы с пользователями и статистикой
 - Регистрация пользователя
 - Добавление беговых тренировок (дистанция)
 - Просмотр статистики
@@ -11,9 +12,11 @@
 
 ## Технологии
 - Go
+- REST API
 - Telegram Bot API
 - PostgreSQL
 - Docker / Docker Compose
+- CI (GitHub Actions)
 - pgx (PostgreSQL driver)
 - go test (юнит/интеграционные тесты)
 
@@ -34,12 +37,17 @@
 
 BOT_TOKEN=your_telegram_bot_token
 DATABASE_URL=postgres://rt_user:rt_pass@127.0.0.1:5432/running_tracker?sslmode=disable
+SERVER_PORT=:8080
 
 ### Быстрый старт (dev)
 Поднять dev-БД, применить SQL-схему и запустить бота:
 
 make db
 make run
+
+### Запуск REST API
+
+make run-api
 
 ## Тесты
 
@@ -57,26 +65,24 @@ make test
 
 make test-cover
 
-## Полезные команды (Makefile)
-- `make up` / `make down` — поднять/остановить dev+test БД (docker compose)
-- `make logs` / `make logs-test` — логи dev/test БД
-- `make init` — применить схему к dev БД
-- `make db` — dev: up + init
-- `make init-test` — применить схему к test БД (порт 5434, база `running_tracker_test`)
-- `make db-test` — test: up + init-test
-
 ## Структура проекта
-cmd/tg/              — точка входа приложения
-internal/handlers/   — обработчики сообщений и callback-кнопок
+cmd/tg/              — точка входа Telegram-бота
+cmd/api/             — точка входа REST API
+
+internal/handlers/   — обработчики сообщений и callback-кнопок (Telegram)
+internal/httpapi/    — REST API (handlers, DTO, server)
 internal/service/    — бизнес-логика
-internal/storage/    — работа с хранилищем данных
+internal/storage/    — интерфейсы хранилища данных
+internal/storage/postgres/ — реализация хранилища на PostgreSQL
 internal/telegram/   — обёртки над Telegram Bot API
+
 sql/                 — SQL-скрипты (создание таблиц)
+.github/workflows/   — CI (GitHub Actions)
+
 
 ## Статус проекта
 В активной разработке.
 
 Планируется:
-- рефакторинг бизнес-логики
-- добавление REST API
-- CI (GitHub Actions)
+- OpenAPI/Swagger
+- Prometheus/Grafana
