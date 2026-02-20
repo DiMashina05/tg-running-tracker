@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: rt_user
+          POSTGRES_PASSWORD: rt_pass
+          POSTGRES_DB: running_tracker_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U rt_user -d running_tracker_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      TEST_DATABASE_URL: postgres://rt_user:rt_pass@localhost:5432/running_tracker_test?sslmode=disable
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Install psql client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U rt_user -d running_tracker_test && exit 0
+            sleep 1
+          done
+          echo "Postgres is not ready" && exit 1
+
+      - name: Apply schema
+        run: psql "${TEST_DATABASE_URL}" -f sql/001_Create.sql
+
+      - name: Download deps
+        run: go mod download
+
+      - name: Test
+        run: go test ./...
+
+      - name: Vet
+        run: go vet ./...
