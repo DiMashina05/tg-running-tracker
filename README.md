@@ -13,6 +13,7 @@
 ## Технологии
 - Go
 - REST API
+- OpenAPI/Swagger (http://localhost:8080/swagger/)
 - Telegram Bot API
 - PostgreSQL
 - Docker / Docker Compose
@@ -78,11 +79,3 @@ cmd/tg/              — точка входа Telegram-бота
 
 - sql/                 — SQL-скрипты (создание таблиц)
 - .github/workflows/   — CI (GitHub Actions)
-
-
-## Статус проекта
-В активной разработке.
-
-Планируется:
-- OpenAPI/Swagger
-- Prometheus/Grafana

@@ -1,0 +1,222 @@
+openapi: 3.0.3
+info:
+  title: tg-running-tracker API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /users/name:
+    post:
+      summary: Register user (set name)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostNameRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostNameResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '409':
+          description: Already registered
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /users/runs:
+    post:
+      summary: Add run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRunsRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostRunsResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Not Registered
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /users/profile:
+    get:
+      summary: Get user profile
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfileResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /users/stats:
+    get:
+      summary: Get user stats
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    PostNameRequest:
+      type: object
+      required: [user_id, name]
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    PostNameResponse:
+      type: object
+      required: [user_id, name]
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    PostRunsRequest:
+      type: object
+      required: [user_id, distance]
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        distance:
+          type: string
+          description: Distance as string (validated in service), e.g. "5", "5.5", "5,5"
+
+    PostRunsResponse:
+      type: object
+      required: [user_id, distance]
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        distance:
+          type: number
+          format: double
+
+    GetProfileResponse:
+      type: object
+      required: [user_id, name]
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    StatsResponse:
+  type: object
+  required: [count_runs, sum_distance, average, max_dist, min_dist]
+  properties:
+    count_runs:
+      type: integer
+    sum_distance:
+      type: number
+      format: double
+    average:
+      type: number
+      format: double
+    max_dist:
+      type: number
+      format: double
+    min_dist:
+      type: number
+      format: double
